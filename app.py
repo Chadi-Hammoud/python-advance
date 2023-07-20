@@ -44,6 +44,35 @@ class MyAPIHandler(BaseHTTPRequestHandler):
         else:
             self._set_response(404, 'text/plain')
             self.wfile.write(b'Not Found')
+            
+    def do_POST(self):
+        if self.path == '/api/Postdata':
+            content_length = int(self.headers['Content-Length'])
+            post_data = self.rfile.read(content_length)
+
+            try:
+                # Convert the received JSON data to a Python dictionary
+                data_dict = json.loads(post_data)
+
+                # Insert the data into the MySQL database
+                cursor = connection.cursor()
+                query = "INSERT INTO your_table_name (name, salary,Dept_id,last_name) VALUES (%s,%s,%s,%s)"
+                values = (data_dict['name'], data_dict['salary'], data_dict['Dept_id'], data_dict['last_name'])
+                cursor.execute(query, values)
+                connection.commit()
+                cursor.close()
+
+                self._set_response(201, 'application/json')
+                self.wfile.write(json.dumps({"message": "Data inserted successfully"}).encode('utf-8'))
+
+            except json.JSONDecodeError:
+                self._set_response(400, 'application/json')
+                self.wfile.write(json.dumps({"error": "Invalid JSON data"}).encode('utf-8'))
+
+        else:
+            self._set_response(404, 'text/plain')
+            self.wfile.write(b'Not Found')
+
 
     def _get_all_data(self):
         # Fetch data from MySQL database
