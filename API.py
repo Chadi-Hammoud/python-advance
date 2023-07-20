@@ -17,8 +17,16 @@ pass_times = response.json()[0]
 
 jprint(pass_times)
 
-user =[]
-for person in pass_times:
-    per = person
-    user.append(per)
-print(user)
+# user =[]
+# for person in pass_times:
+#     per = person
+#     user.append(per)
+# print(user)
+from datetime import datetime
+
+times = []
+
+for rt in risetimes:
+    time = datetime.fromtimestamp(rt)
+    times.append(time)
+    print(time)
